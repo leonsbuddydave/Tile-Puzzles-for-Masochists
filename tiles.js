@@ -9,6 +9,11 @@ var tile_h;
 var tiles_y;
 var tiles_x;
 
+var clicked_tile_x;
+var clicked_tile_y;
+
+var EmptyTile;
+
 function MakeTileGame(canvas, imgSrc, puzzleWidth, puzzleHeight)
 {
 	canv = document.getElementById(canvas);
@@ -30,35 +35,48 @@ function MakeTileGame(canvas, imgSrc, puzzleWidth, puzzleHeight)
 		DrawBoard();
 	}
 
-	$(canvas).click( MoveTile );
-	
+	$("#" + canvas).click( MoveTile );	
 }
 
 function MoveTile(event)
 {
 	x = event.clientX;
 	y = event.clientY;
+
+	clicked_tile_x = ( x - x % tile_w ) / tile_w;
+	clicked_tile_y = ( y - y % tile_h ) / tile_h;
+
+	ClickedTile = tileorder[clicked_tile_y * tiles_y + clicked_tile_x];
+
+	console.log( "ClickX: " + clicked_tile_x + ", ClickY: " + clicked_tile_y + " Clicked: " + ClickedTile );
 }
 
 function RandomizeTilePosition()
 {
 	tileorder = new Array(tiles_x * tiles_y);
+
 	// Populate the array with sequential order
 	for (i = 0; i < tiles_x * tiles_y; i++) { tileorder[i] = i; }
 
 	// FUCK IT UP
 	tileorder.sort( function(a, b) { return 0.5 - Math.random() } );
-	console.log("New Tile Order: " + tileorder);
+
+	// YEAH FUCK IT
 	return tileorder;
 }
 
 function DrawBoard()
 {
-	console.log("Drawing board! " + tiles_x + ", " + tiles_y);
+	c.fillStyle = "#000000";
+	c.fillRect(0, 0, width, height);
+
 	for (i = 0; i < tiles_x; i++)
 	{
 		for (ii = 0; ii < tiles_y; ii++)
 		{
+			if ( i == ( tiles_x - 1 ) && ii === ( tiles_y - 1 ) )
+				break;
+
 			c.putImageData(tiles[ tileorder[i * tiles_y + ii] ], i * tile_w, ii * tile_h);
 		}
 	}
@@ -66,12 +84,11 @@ function DrawBoard()
 
 function GetTiles()
 {
-	tiles = new Array(9);
+	tiles = new Array();
 
 	tile_w = Math.ceil(width / tiles_x);
 	tile_h = Math.ceil(height / tiles_y);
 	
-	console.log("Width: " + tile_w + " Height: " + tile_h);
 	for (i = 0; i < tiles_x; i++)
 	{
 		for (ii = 0; ii < tiles_y; ii++)
@@ -85,9 +102,4 @@ function DrawRandomTile()
 {
 	context = document.getElementById("testBuffer").getContext('2d');
 	context.putImageData(tiles[ Math.floor(Math.random() * 9) ], 0, 0);
-}
-
-function Float(num)
-{
-	return num.toFixed(2);
 }
