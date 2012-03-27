@@ -4,10 +4,53 @@
 		<script type="text/javascript" src="tiles.js"></script>
 	</head>
 	<body>
-		<canvas id="imageBoard" width="500px" height="500px">Nope!</canvas>
-		<canvas id="testBuffer" width="500px" height="500px"></canvas>
+		<style type="text/css">
+			#boardContainer
+			{
+				float: left;
+				
+			}
+			#customize
+			{
+				float: left;
+				padding: 20px;
+				height: 400px;
+				width: 300px;
+			}
+		</style>
+		<script>
+			$(document).ready(function() {
+
+    				$("#updateButton").click( function() {
+					MakeTileGame("imageBoard", $("#purl").val(), $("#pwidth").val(), $("#pheight").val());
+				});
+
+			});
+  		</script>
+		
+		<div id="boardContainer">
+			<canvas id="imageBoard" width="400px" height="400px">Nope!</canvas>
+		</div>
+		<div id="customize">
+			<label for="pwidth">Puzzle Width</label><br />
+			<input type="text" name="pwidth" id="pwidth" value="4" />
+			<br /><br />
+			<label for="pheight">Puzzle Height</label><br />
+			<input type="text" name="pheight" id="pheight" value="4" />
+			<br /><br />
+			<label for="purl">Puzzle Image</label><br />
+			<select name="purl" id="purl">
+				<option value="bacon.jpg">Bacon</option>
+				<option value="bird.jpg">Birds</option>
+				<option value="additionalbacon.jpg">Additional Bacon</option>
+				<option value="familymonopoly.jpg">Family Monopoly</option>
+				<option value="freedom.jpg">Freedom</option>
+			</select>
+			<br /><br />
+			<input type="button" id="updateButton" value="Update!" />
+		</div>
 		<script type="text/javascript">
-			MakeTileGame("imageBoard", 'bird.jpg', 5, 5);
+			MakeTileGame("imageBoard", "bacon.jpg", 4, 4);
 		</script>
 	</body>
 </html>

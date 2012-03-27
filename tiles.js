@@ -29,6 +29,7 @@ function MakeTileGame(canvas, imgSrc, puzzleWidth, puzzleHeight)
 	{
 		width = img.width;
 		height = img.height;
+		$("#" + canvas).attr( { width: width, height: height } );
 		c.drawImage(img, 0, 0);
 		GetTiles();
 		tileorder = RandomizeTilePosition();
@@ -46,9 +47,54 @@ function MoveTile(event)
 	clicked_tile_x = ( x - x % tile_w ) / tile_w;
 	clicked_tile_y = ( y - y % tile_h ) / tile_h;
 
-	ClickedTile = tileorder[clicked_tile_y * tiles_y + clicked_tile_x];
+	ClickedTile = tileorder[clicked_tile_x * tiles_y + clicked_tile_y];
 
-	console.log( "ClickX: " + clicked_tile_x + ", ClickY: " + clicked_tile_y + " Clicked: " + ClickedTile );
+	console.log( "ClickX: " + clicked_tile_x + ", ClickY: " + clicked_tile_y + " Clicked ID: " + ClickedTile + " ClickLocation: " + ( clicked_tile_x * tiles_y + clicked_tile_y) );
+
+	// Check all around the clicked area for the blank tile
+
+	swap = false;
+
+	Right = ( clicked_tile_x + 1 ) * tiles_y + clicked_tile_y;
+	Above = clicked_tile_x * tiles_y + clicked_tile_y - 1;
+	Left = ( clicked_tile_x - 1 ) * tiles_y + clicked_tile_y;
+	Below = clicked_tile_x * tiles_y + clicked_tile_y + 1;
+
+	console.log( "Right: " + Right + " with ID " + tileorder[ Right ] );
+	console.log( "Above: " + Above + " with ID " + tileorder[ Above ] );
+	
+	ClickedIndex = clicked_tile_x * tiles_y + clicked_tile_y;
+
+	// Above
+	if ( tileorder [ Above ] === ( tiles_x * tiles_y - 1) )
+	{
+		SwapTiles(Above, ClickedIndex);
+	}
+	// Right
+	if (tileorder [ Right ] === ( tiles_x * tiles_y - 1 ) )
+	{
+		SwapTiles(Right, ClickedIndex);
+	}
+	// Below
+	if (tileorder [ Below ] === ( tiles_x * tiles_y - 1) )
+	{
+		SwapTiles(Below, ClickedIndex);
+	}
+	// Left
+	if (tileorder [ Left ] === ( tiles_x * tiles_y - 1) )
+	{
+		SwapTiles(Left, ClickedIndex);
+	}
+
+	DrawBoard();
+}
+
+function SwapTiles(tile1, tile2)
+{
+	console.log("Swapping " + tile1 + " and " + tile2);
+	temp = tileorder[tile1];
+	tileorder[tile1] = tileorder[tile2];
+	tileorder[tile2] = temp;
 }
 
 function RandomizeTilePosition()
@@ -67,17 +113,19 @@ function RandomizeTilePosition()
 
 function DrawBoard()
 {
-	c.fillStyle = "#000000";
+	c.fillStyle = "#0000FF";
 	c.fillRect(0, 0, width, height);
 
 	for (i = 0; i < tiles_x; i++)
 	{
 		for (ii = 0; ii < tiles_y; ii++)
 		{
-			if ( i == ( tiles_x - 1 ) && ii === ( tiles_y - 1 ) )
-				break;
+			// Last tile, don't draw
+			if ( tileorder[ i * tiles_y + ii ] === tiles_x * tiles_y - 1)
+				continue;
 
 			c.putImageData(tiles[ tileorder[i * tiles_y + ii] ], i * tile_w, ii * tile_h);
+			//c.fillText( (i * tiles_y + ii), i * tile_w + tile_w / 2, ii * tile_h + tile_h / 2);
 		}
 	}
 }
